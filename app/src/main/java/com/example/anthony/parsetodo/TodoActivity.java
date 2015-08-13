@@ -1,8 +1,10 @@
 package com.example.anthony.parsetodo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseACL;
 import com.parse.ParseAnalytics;
 import com.parse.ParseCrashReporting;
 import com.parse.ParseException;
@@ -21,12 +24,13 @@ import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TodoActivity extends Activity {
+public class TodoActivity extends AppCompatActivity {
 
     private EditText mTaskInput;
     private ListView mListView;
@@ -37,11 +41,21 @@ public class TodoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
 
-        ParseCrashReporting.enable(this);
-        Parse.initialize(this, getString(R.string.app_id), getString(R.string.client_id));
-        ParseAnalytics.trackAppOpenedInBackground(getIntent());
-        ParseObject.registerSubclass(Task.class);
-        ParseInstallation.getCurrentInstallation().saveInBackground();
+//        ParseCrashReporting.enable(this);
+
+        Intent intent = getIntent();
+        if (intent.getAction() != null ){
+            if (intent.getAction().equals("android.intent.action.MAIN")) {
+            initParse();
+            }
+        }
+
+        ParseUser current = ParseUser.getCurrentUser();
+        if (current == null) {
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        }
 
         mTaskInput = (EditText) findViewById(R.id.task_input);
         mListView = (ListView) findViewById(R.id.task_list);
@@ -66,8 +80,16 @@ public class TodoActivity extends Activity {
         updateData();
     }
 
+    private void initParse() {
+        Parse.initialize(this, getString(R.string.app_id), getString(R.string.client_id));
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
+        ParseObject.registerSubclass(Task.class);
+        ParseInstallation.getCurrentInstallation().saveInBackground();
+    }
+
     public void updateData() {
         ParseQuery<Task> query = ParseQuery.getQuery(Task.class);
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
         query.findInBackground(new FindCallback<Task>() {
             @Override
@@ -98,18 +120,32 @@ public class TodoActivity extends Activity {
         if (id == R.id.action_settings) {
             return true;
         }
+        else if (id == R.id.action_logout) {
+            ParseUser.logOut();
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            finish();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
     public void createTask(View v) {
-        if (mTaskInput.getText().length() > 0) {
-            Task t = new Task();
-            t.setCompleted(false);
-            t.setDescription(mTaskInput.getText().toString());
-            t.saveEventually();
-            mTaskInput.setText("");
-            mAdapter.insert(t, 0);
+        try {
+            if (mTaskInput.getText().length() > 0) {
+                Task t = new Task();
+                t.setACL(new ParseACL(ParseUser.getCurrentUser()));
+                t.setUser(ParseUser.getCurrentUser());
+                t.setCompleted(false);
+                t.setDescription(mTaskInput.getText().toString());
+                t.saveEventually();
+                mTaskInput.setText("");
+                mAdapter.insert(t, 0);
+            }
+        }
+        catch (Exception e) {
+            Log.d("TODO APP", e.getLocalizedMessage());
         }
     }
 }

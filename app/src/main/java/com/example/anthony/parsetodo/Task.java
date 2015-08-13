@@ -2,6 +2,7 @@ package com.example.anthony.parsetodo;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 /**
  * Created by anthony on 8/13/15.
@@ -27,4 +28,9 @@ public class Task extends ParseObject {
     public void setDescription(String description) {
         put("description", description);
     }
+
+    public void setUser(ParseUser currentUser) {
+        put("user", currentUser);
+    }
 }
+

@@ -6,4 +6,10 @@
     <string name="app_id">oqtZruhlQmG23xKSioREJjVVB6oQu1pcLx3S8ROF</string>
     <string name="client_id">jPRflP57hHcnjlWLK0XQHNxoBbWhaAqc0poCy63N</string>
     <string name="title_activity_register">Register</string>
+    <string name="username">Username:</string>
+    <string name="password">Password:</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="alreadyHaveAccount">Already Have an Accout? Log In!</string>
+    <string name="action_logout">Logout</string>
+    <string name="needToRegister">Dont have an accout? Register!</string>
 </resources>
