@@ -1,4 +1,4 @@
-package com.example.anthony.parsetodo;
+package com.example.anthony.parsetodo.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,10 +9,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.anthony.parsetodo.R;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 /**
  * A login screen that offers login via email/password.

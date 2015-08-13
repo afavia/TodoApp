@@ -1,4 +1,4 @@
-package com.example.anthony.parsetodo;
+package com.example.anthony.parsetodo.adapters;
 
 import android.content.Context;
 import android.graphics.Paint;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import com.example.anthony.parsetodo.R;
 import com.example.anthony.parsetodo.models.Task;
 
 /**
