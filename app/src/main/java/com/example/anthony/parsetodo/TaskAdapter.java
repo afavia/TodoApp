@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import com.example.anthony.parsetodo.models.Task;
+
 /**
  * Created by Anthony on 8/13/2015.
  */

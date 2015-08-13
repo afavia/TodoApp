@@ -1,4 +1,4 @@
-package com.example.anthony.parsetodo;
+package com.example.anthony.parsetodo.models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;

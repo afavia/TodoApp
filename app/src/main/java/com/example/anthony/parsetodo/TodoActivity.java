@@ -1,6 +1,5 @@
 package com.example.anthony.parsetodo;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -18,17 +17,16 @@ import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseAnalytics;
-import com.parse.ParseCrashReporting;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.anthony.parsetodo.models.Task;
 
 public class TodoActivity extends AppCompatActivity {
 
