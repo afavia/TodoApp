@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.anthony.parsetodo.R;
 import com.example.anthony.parsetodo.adapters.TaskAdapter;
+import com.example.anthony.parsetodo.utils.LogHelper;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseACL;
@@ -41,12 +42,12 @@ public class TodoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
 
-//        ParseCrashReporting.enable(this);
+        LogHelper.configure(getResources().getString(R.string.app_name));
 
         Intent intent = getIntent();
         if (intent.getAction() != null ){
             if (intent.getAction().equals("android.intent.action.MAIN")) {
-            initParse();
+                initParse();
             }
         }
 
@@ -81,6 +82,7 @@ public class TodoActivity extends AppCompatActivity {
     }
 
     private void initParse() {
+        //        ParseCrashReporting.enable(this);
         Parse.initialize(this, getString(R.string.app_id), getString(R.string.client_id));
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
         ParseObject.registerSubclass(Task.class);
