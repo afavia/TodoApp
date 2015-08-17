@@ -15,17 +15,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.anthony.parsetodo.AppController;
 import com.example.anthony.parsetodo.R;
 import com.example.anthony.parsetodo.adapters.TaskAdapter;
 import com.example.anthony.parsetodo.utils.LogHelper;
-import com.parse.FindCallback;
 import com.parse.Parse;
-import com.parse.ParseACL;
 import com.parse.ParseAnalytics;
-import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -40,10 +37,14 @@ public class TodoActivity extends AppCompatActivity {
     private ListView mListView;
     private TaskAdapter mAdapter;
 
+    private AppController mController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
+
+        mController = (AppController) getApplicationContext();
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -96,18 +97,8 @@ public class TodoActivity extends AppCompatActivity {
     }
 
     public void updateData() {
-        ParseQuery<Task> query = ParseQuery.getQuery(Task.class);
-        query.whereEqualTo("user", ParseUser.getCurrentUser());
-        query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
-        query.findInBackground(new FindCallback<Task>() {
-            @Override
-            public void done(List<Task> tasks, ParseException e) {
-                if (tasks != null) {
-                    mAdapter.clear();
-                    mAdapter.addAll(tasks);
-                }
-            }
-        });
+        mAdapter.clear();
+        mAdapter.addAll(mController.getTasks());
     }
 
     @Override
@@ -140,7 +131,7 @@ public class TodoActivity extends AppCompatActivity {
                 if (newText.equals("")) {
                     updateData();
                 }
-                List<Task> matches = new LinkedList<Task>();
+                List<Task> matches = new LinkedList<>();
                 for (int i = 0; i < mAdapter.getCount(); i++) {
                     if (mAdapter.getItem(i).getDescription().contains(newText)) {
                         matches.add(mAdapter.getItem(i));
@@ -180,14 +171,9 @@ public class TodoActivity extends AppCompatActivity {
     public void createTask(View v) {
         try {
             if (mTaskInput.getText().length() > 0) {
-                Task t = new Task();
-                t.setACL(new ParseACL(ParseUser.getCurrentUser()));
-                t.setUser(ParseUser.getCurrentUser());
-                t.setCompleted(false);
-                t.setDescription(mTaskInput.getText().toString());
-                t.saveEventually();
+                mController.addTask(mTaskInput.getText().toString(), false);
                 mTaskInput.setText("");
-                mAdapter.insert(t, 0);
+                mAdapter.insert(mController.getTask(0), 0);
             }
         }
         catch (Exception e) {
