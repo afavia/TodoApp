@@ -12,4 +12,5 @@
     <string name="alreadyHaveAccount">Already Have an Accout? Log In!</string>
     <string name="action_logout">Logout</string>
     <string name="needToRegister">Dont have an accout? Register!</string>
+    <string name="title_activity_task">TaskActivity</string>
 </resources>

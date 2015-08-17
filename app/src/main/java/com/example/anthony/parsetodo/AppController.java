@@ -1,8 +1,6 @@
 package com.example.anthony.parsetodo;
 
 import android.app.Application;
-import android.support.v4.content.LocalBroadcastManager;
-
 import com.example.anthony.parsetodo.dao.IRepository;
 import com.example.anthony.parsetodo.dao.ParseRepository;
 import com.example.anthony.parsetodo.models.Task;

@@ -73,15 +73,20 @@ public class TodoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Task t = mAdapter.getItem(position);
-                TextView taskDescription = (TextView) view.findViewById(R.id.task_description);
-                t.setCompleted(!t.isCompleted());
+//                TextView taskDescription = (TextView) view.findViewById(R.id.task_description);
+//                t.setCompleted(!t.isCompleted());
+//
+//                if (t.isCompleted()) {
+//                    taskDescription.setPaintFlags(taskDescription.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+//                } else {
+//                    taskDescription.setPaintFlags(taskDescription.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+//                }
+//                t.saveEventually();
 
-                if (t.isCompleted()) {
-                    taskDescription.setPaintFlags(taskDescription.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                } else {
-                    taskDescription.setPaintFlags(taskDescription.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                }
-                t.saveEventually();
+                Intent i = new Intent(TodoActivity.this, TaskActivity.class);
+                i.putExtra(TaskActivity.TASK_TITLE, t.getDescription());
+                i.putExtra(TaskActivity.TASK_NUMBER, position);
+                startActivity(i);
             }
         });
 
