@@ -29,6 +29,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.example.anthony.parsetodo.models.Task;
@@ -120,11 +121,44 @@ public class TodoActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // perform query here
+                List<Task> matches = new LinkedList<Task>();
+                for (int i = 0; i < mAdapter.getCount(); i++) {
+                    if (mAdapter.getItem(i).getDescription().contains(query)) {
+                        matches.add(mAdapter.getItem(i));
+                    }
+                }
+
+                if (matches.size() > 0) {
+                    mAdapter.clear();
+                    mAdapter.addAll(matches);
+                }
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (newText.equals("")) {
+                    updateData();
+                }
+                List<Task> matches = new LinkedList<Task>();
+                for (int i = 0; i < mAdapter.getCount(); i++) {
+                    if (mAdapter.getItem(i).getDescription().contains(newText)) {
+                        matches.add(mAdapter.getItem(i));
+                    }
+                }
+
+                if (matches.size() > 0) {
+                    mAdapter.clear();
+                    mAdapter.addAll(matches);
+                }
+
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                updateData();
                 return false;
             }
         });
