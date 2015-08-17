@@ -3,6 +3,7 @@ package com.example.anthony.parsetodo.models;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import java.util.Date;
 
 /**
  * Created by anthony on 8/13/15.
@@ -32,5 +33,22 @@ public class Task extends ParseObject {
     public void setUser(ParseUser currentUser) {
         put("user", currentUser);
     }
+
+    public void setDueDate(Date dueDate) {
+        put("due_date", dueDate);
+    }
+
+    public Date getDueDate() {
+        return getDate("due_date");
+    }
+
+    public void setNotes(String notes) {
+        put("notes", notes);
+    }
+
+    public String getNotes() {
+        return getString("notes");
+    }
+
 }
 
