@@ -67,7 +67,14 @@ public class TodoActivity extends AppCompatActivity {
             finish();
         }
 
+        setupUI();
+
+        updateData();
+    }
+
+    private void setupUI() {
         mTaskInput = (EditText) findViewById(R.id.task_input);
+        mTaskInput.clearFocus();
         mListView = (ListView) findViewById(R.id.task_list);
         mAdapter = new TaskAdapter(this, new ArrayList<Task>());
         mListView.setAdapter(mAdapter);
@@ -91,8 +98,6 @@ public class TodoActivity extends AppCompatActivity {
                 startActivityForResult(i, TASK_ACTIVITY_REQUEST);
             }
         });
-
-        updateData();
     }
 
     @Override
