@@ -14,4 +14,8 @@
     <string name="needToRegister">Dont have an accout? Register!</string>
     <string name="title_activity_task">TaskActivity</string>
     <string name="completed_check_box_title">Done?</string>
+    <string name="done_string">Done</string>
+    <string name="notes_string">Notes:</string>
+    <string name="due_date_string">Due Date:</string>
+    <string name="description">Task Description:</string>
 </resources>
