@@ -5,6 +5,8 @@ import com.example.anthony.parsetodo.dao.IRepository;
 import com.example.anthony.parsetodo.dao.ParseRepository;
 import com.example.anthony.parsetodo.models.Task;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,15 +29,22 @@ public class AppController extends Application{
     }
 
 
-    public void addTask(String description, boolean complete) {
+    public void addTask(String description, boolean complete, Date dueDate) {
         Task t = new Task();
         t.setCompleted(complete);
         t.setDescription(description);
+        t.setDueDate(dueDate);
         repo.addTask(t);
     }
 
     public Task getTask(int position) {
         if (position < repo.getTasks().size()) return repo.getTasks().get(position);
         else return new Task();
+    }
+
+    public void updateTask(Task mTask, int taskPos) {
+        if (taskPos >= 0 && taskPos < getTasks().size())
+            getTasks().set(taskPos, mTask);
+
     }
 }

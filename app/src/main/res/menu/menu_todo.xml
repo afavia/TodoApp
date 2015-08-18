@@ -26,8 +26,9 @@
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="ifRoom"
         android:title="@string/action_settings"
-        android:onClick="onClickSettings"/>
+        android:onClick="onClickSettings"
+        android:icon="@android:drawable/ic_menu_preferences"/>
 
 </menu>

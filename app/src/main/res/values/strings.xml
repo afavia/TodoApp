@@ -13,4 +13,5 @@
     <string name="action_logout">Logout</string>
     <string name="needToRegister">Dont have an accout? Register!</string>
     <string name="title_activity_task">TaskActivity</string>
+    <string name="completed_check_box_title">Done?</string>
 </resources>

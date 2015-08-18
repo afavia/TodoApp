@@ -26,6 +26,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import com.example.anthony.parsetodo.models.Task;
 
 public class TodoActivity extends AppCompatActivity {
 
+    private static final int TASK_ACTIVITY_REQUEST = 1;
     private EditText mTaskInput;
     private ListView mListView;
     private TaskAdapter mAdapter;
@@ -86,10 +88,23 @@ public class TodoActivity extends AppCompatActivity {
                 Intent i = new Intent(TodoActivity.this, TaskActivity.class);
                 i.putExtra(TaskActivity.TASK_TITLE, t.getDescription());
                 i.putExtra(TaskActivity.TASK_NUMBER, position);
-                startActivity(i);
+                startActivityForResult(i, TASK_ACTIVITY_REQUEST);
             }
         });
 
+        updateData();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == TASK_ACTIVITY_REQUEST) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         updateData();
     }
 
@@ -176,7 +191,9 @@ public class TodoActivity extends AppCompatActivity {
     public void createTask(View v) {
         try {
             if (mTaskInput.getText().length() > 0) {
-                mController.addTask(mTaskInput.getText().toString(), false);
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DAY_OF_YEAR, 1);
+                mController.addTask(mTaskInput.getText().toString(), false, cal.getTime());
                 mTaskInput.setText("");
                 mAdapter.insert(mController.getTask(0), 0);
             }
