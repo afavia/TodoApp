@@ -4,8 +4,6 @@ import android.app.Application;
 import com.example.anthony.parsetodo.dao.IRepository;
 import com.example.anthony.parsetodo.dao.ParseRepository;
 import com.example.anthony.parsetodo.models.Task;
-
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 

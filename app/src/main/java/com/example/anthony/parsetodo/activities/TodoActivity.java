@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -96,6 +97,14 @@ public class TodoActivity extends AppCompatActivity {
                 i.putExtra(TaskActivity.TASK_TITLE, t.getDescription());
                 i.putExtra(TaskActivity.TASK_NUMBER, position);
                 startActivityForResult(i, TASK_ACTIVITY_REQUEST);
+            }
+        });
+
+        Button addTaskBtn = (Button) findViewById(R.id.submit_button);
+        addTaskBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createTask(v);
             }
         });
     }
@@ -200,7 +209,8 @@ public class TodoActivity extends AppCompatActivity {
                 cal.add(Calendar.DAY_OF_YEAR, 1);
                 mController.addTask(mTaskInput.getText().toString(), false, cal.getTime());
                 mTaskInput.setText("");
-                mAdapter.insert(mController.getTask(0), 0);
+                mAdapter.notifyDataSetChanged();
+                mTaskInput.clearFocus();
             }
         }
         catch (Exception e) {
