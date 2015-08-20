@@ -11,4 +11,6 @@ public interface IRepository {
     public List<Task> getTasks();
 
     public void addTask(Task task);
+
+    public void updateTask(Task task, int position);
 }

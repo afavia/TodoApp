@@ -1,7 +1,7 @@
 package com.example.anthony.parsetodo.activities;
 
 import android.content.Intent;
-import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,11 +14,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.anthony.parsetodo.AppController;
 import com.example.anthony.parsetodo.R;
 import com.example.anthony.parsetodo.adapters.TaskAdapter;
+import com.example.anthony.parsetodo.models.Task;
 import com.example.anthony.parsetodo.utils.LogHelper;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
@@ -26,14 +26,11 @@ import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.example.anthony.parsetodo.models.Task;
-
-public class TodoActivity extends AppCompatActivity {
+public class TodoActivity extends AppCompatActivity{
 
     private static final int TASK_ACTIVITY_REQUEST = 1;
     private EditText mTaskInput;
@@ -77,7 +74,7 @@ public class TodoActivity extends AppCompatActivity {
         mTaskInput = (EditText) findViewById(R.id.task_input);
         mTaskInput.clearFocus();
         mListView = (ListView) findViewById(R.id.task_list);
-        mAdapter = new TaskAdapter(this, new ArrayList<Task>());
+        mAdapter = new TaskAdapter(this, mController.getTasks());
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -133,6 +130,7 @@ public class TodoActivity extends AppCompatActivity {
     public void updateData() {
         mAdapter.clear();
         mAdapter.addAll(mController.getTasks());
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -204,16 +202,29 @@ public class TodoActivity extends AppCompatActivity {
 
     public void createTask(View v) {
         try {
-            if (mTaskInput.getText().length() > 0) {
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DAY_OF_YEAR, 1);
-                mController.addTask(mTaskInput.getText().toString(), false, cal.getTime());
-                mTaskInput.setText("");
-                mAdapter.notifyDataSetChanged();
-                mTaskInput.clearFocus();
-            }
-        }
-        catch (Exception e) {
+            new AsyncTask<String, Void, Boolean>() {
+
+                @Override
+                protected Boolean doInBackground(String... params) {
+                    String task = params[0];
+                    if (task.length() > 0) {
+                        Calendar cal = Calendar.getInstance();
+                        cal.add(Calendar.DAY_OF_YEAR, 1);
+                        mController.addTask(task, false, cal.getTime());
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void onPostExecute(Boolean result) {
+                    if (result) {
+                        mTaskInput.setText("");
+                        mTaskInput.clearFocus();
+                        updateData();
+                    }
+                }
+            }.execute(mTaskInput.getText().toString());
+        } catch (Exception e) {
             Log.d("TODO APP", e.getLocalizedMessage());
         }
     }

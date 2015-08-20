@@ -40,9 +40,8 @@ public class AppController extends Application{
         else return new Task();
     }
 
-    public void updateTask(Task mTask, int taskPos) {
-        if (taskPos >= 0 && taskPos < getTasks().size())
-            getTasks().set(taskPos, mTask);
+    public void updateTask(Task task, int taskPos) {
+        repo.updateTask(task, taskPos);
 
     }
 }

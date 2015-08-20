@@ -30,6 +30,16 @@ public class ParseRepository implements IRepository {
     public void addTask(Task task) {
         task.setACL(new ParseACL(ParseUser.getCurrentUser()));
         task.setUser(ParseUser.getCurrentUser());
-        task.saveEventually();
+        try {
+            task.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateTask(Task task, int position) {
+        if (position >= 0 && position < getTasks().size())
+            getTasks().set(position, task);
     }
 }
