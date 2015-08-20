@@ -128,9 +128,20 @@ public class TodoActivity extends AppCompatActivity{
     }
 
     public void updateData() {
-        mAdapter.clear();
-        mAdapter.addAll(mController.getTasks());
-        mAdapter.notifyDataSetChanged();
+        new AsyncTask<Void, Void, List<Task>>() {
+
+            @Override
+            protected List<Task> doInBackground(Void... params) {
+                return mController.getTasks();
+            }
+
+            @Override
+            protected void onPostExecute(List<Task> tasks) {
+                mAdapter.clear();
+                mAdapter.addAll(tasks);
+                mAdapter.notifyDataSetChanged();
+            }
+        }.execute();
     }
 
     @Override
