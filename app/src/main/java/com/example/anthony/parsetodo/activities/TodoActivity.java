@@ -20,9 +20,10 @@ import com.example.anthony.parsetodo.R;
 import com.example.anthony.parsetodo.adapters.TaskAdapter;
 import com.example.anthony.parsetodo.events.LogoutEvent;
 import com.example.anthony.parsetodo.events.LogoutResultEvent;
+import com.example.anthony.parsetodo.events.TaskCreateEvent;
 import com.example.anthony.parsetodo.models.Task;
+import com.example.anthony.parsetodo.events.TaskCreateResultEvent;
 import com.example.anthony.parsetodo.utils.LogHelper;
-import com.google.android.gms.appindexing.AppIndexApi;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseInstallation;
@@ -60,6 +61,7 @@ public class TodoActivity extends AppCompatActivity{
         Intent intent = getIntent();
         if (intent.getAction() != null ){
             if (intent.getAction().equals("android.intent.action.MAIN")) {
+                mController.initParse(getIntent());
                 initParse();
             }
         }
@@ -123,14 +125,6 @@ public class TodoActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         updateData();
-    }
-
-    private void initParse() {
-        //        ParseCrashReporting.enable(this);
-        Parse.initialize(this, getString(R.string.app_id), getString(R.string.client_id));
-        ParseAnalytics.trackAppOpenedInBackground(getIntent());
-        ParseObject.registerSubclass(Task.class);
-        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 
     public void updateData() {
@@ -218,37 +212,21 @@ public class TodoActivity extends AppCompatActivity{
             finish();
         }
     }
-    
+
     public void onClickSettings(MenuItem item) {
         LogHelper.logThreadId("Settings option pressed.");
     }
 
     public void createTask(View v) {
-        try {
-            new AsyncTask<String, Void, Boolean>() {
+        AppController.bus.post(new TaskCreateEvent(mTaskInput.getText().toString()));
+    }
 
-                @Override
-                protected Boolean doInBackground(String... params) {
-                    String task = params[0];
-                    if (task.length() > 0) {
-                        Calendar cal = Calendar.getInstance();
-                        cal.add(Calendar.DAY_OF_YEAR, 1);
-                        mController.addTask(task, false, cal.getTime());
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void onPostExecute(Boolean result) {
-                    if (result) {
-                        mTaskInput.setText("");
-                        mTaskInput.clearFocus();
-                        updateData();
-                    }
-                }
-            }.execute(mTaskInput.getText().toString());
-        } catch (Exception e) {
-            Log.d("TODO APP", e.getLocalizedMessage());
+    @Subscribe
+    public void onTaskCreateResult(TaskCreateResultEvent resultEvent) {
+        if (resultEvent.isSuccessful) {
+            mTaskInput.setText("");
+            mTaskInput.clearFocus();
+            updateData();
         }
     }
 }

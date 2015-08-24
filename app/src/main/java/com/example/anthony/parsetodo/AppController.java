@@ -2,6 +2,8 @@ package com.example.anthony.parsetodo;
 
 import android.app.Application;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.anthony.parsetodo.activities.LoginActivity;
 import com.example.anthony.parsetodo.activities.RegisterActivity;
@@ -14,22 +16,29 @@ import com.example.anthony.parsetodo.events.LogoutEvent;
 import com.example.anthony.parsetodo.events.LogoutResultEvent;
 import com.example.anthony.parsetodo.events.RegisterEvent;
 import com.example.anthony.parsetodo.events.RegisterResultEvent;
+import com.example.anthony.parsetodo.events.TaskCreateEvent;
+import com.example.anthony.parsetodo.events.TaskCreateResultEvent;
 import com.example.anthony.parsetodo.models.Task;
 import com.parse.LogInCallback;
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Anthony on 8/17/2015.
  */
-public class AppController extends Application{
+public class AppController extends Application {
 
     private IRepository repo;
 
@@ -86,19 +95,19 @@ public class AppController extends Application{
                             String msg = "";
                             switch (e.getCode()) {
                                 case ParseException.USERNAME_TAKEN:
-                                    msg ="Sorry this username is already taken";
+                                    msg = "Sorry this username is already taken";
                                     break;
                                 case ParseException.USERNAME_MISSING:
-                                    msg ="Sorry you must supply a username to register";
+                                    msg = "Sorry you must supply a username to register";
                                     break;
                                 case ParseException.PASSWORD_MISSING:
-                                    msg ="Sorry you must supply a password to register";
+                                    msg = "Sorry you must supply a password to register";
                                     break;
                                 case ParseException.OBJECT_NOT_FOUND:
-                                    msg ="Sorry, those credentials were invalid.";
+                                    msg = "Sorry, those credentials were invalid.";
                                     break;
                                 default:
-                                    msg =e.getLocalizedMessage();
+                                    msg = e.getLocalizedMessage();
                                     break;
                             }
                             bus.post(new LoginResultEvent(false, msg));
@@ -118,8 +127,7 @@ public class AppController extends Application{
             public void done(ParseException e) {
                 if (e == null) {
                     bus.post(new RegisterResultEvent(true, ""));
-                }
-                else {
+                } else {
                     String msg = "";
                     switch (e.getCode()) {
                         case ParseException.USERNAME_TAKEN:
@@ -139,5 +147,37 @@ public class AppController extends Application{
                 }
             }
         });
+    }
+
+    @Subscribe
+    public void onCreateTaskEvent(TaskCreateEvent event) {
+        new AsyncTask<String, Void, Boolean>() {
+
+            @Override
+            protected Boolean doInBackground(String... params) {
+                String task = params[0];
+                if (task.length() > 0) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.DAY_OF_YEAR, 1);
+                    addTask(task, false, cal.getTime());
+                }
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                if (result) {
+                    bus.post(new TaskCreateResultEvent(true, ""));
+                }
+            }
+        }.execute(event.Description);
+    }
+
+    public void initParse(Intent intent) {
+        //        ParseCrashReporting.enable(this);
+        Parse.initialize(this, getString(R.string.app_id), getString(R.string.client_id));
+        ParseAnalytics.trackAppOpenedInBackground(intent);
+        ParseObject.registerSubclass(Task.class);
+        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 }
