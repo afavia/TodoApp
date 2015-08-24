@@ -42,6 +42,8 @@ public class TaskActivity extends AppCompatActivity {
 
         mController = (AppController) getApplicationContext();
 
+        AppController.bus.register(this);
+
         Intent i = getIntent();
 
         setTitle(i.getStringExtra(TASK_TITLE));

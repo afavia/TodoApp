@@ -8,9 +8,9 @@ import java.util.List;
  */
 public interface IRepository {
 
-    public List<Task> getTasks();
+    List<Task> getTasks();
 
-    public void addTask(Task task);
+    void addTask(Task task);
 
-    public void updateTask(Task task, int position);
+    void updateTask(Task task, int position);
 }

@@ -18,13 +18,17 @@ import android.widget.ListView;
 import com.example.anthony.parsetodo.AppController;
 import com.example.anthony.parsetodo.R;
 import com.example.anthony.parsetodo.adapters.TaskAdapter;
+import com.example.anthony.parsetodo.events.LogoutEvent;
+import com.example.anthony.parsetodo.events.LogoutResultEvent;
 import com.example.anthony.parsetodo.models.Task;
 import com.example.anthony.parsetodo.utils.LogHelper;
+import com.google.android.gms.appindexing.AppIndexApi;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.squareup.otto.Subscribe;
 
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -45,6 +49,8 @@ public class TodoActivity extends AppCompatActivity{
         setContentView(R.layout.activity_todo);
 
         mController = (AppController) getApplicationContext();
+
+        AppController.bus.register(this);
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -201,12 +207,18 @@ public class TodoActivity extends AppCompatActivity{
     }
 
     public void onLogout(MenuItem item) {
-        ParseUser.logOut();
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
-        finish();
+        AppController.bus.post(new LogoutEvent());
     }
 
+    @Subscribe
+    public void onLogoutComplete(LogoutResultEvent result) {
+        if (result.isSuccessful) {
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        }
+    }
+    
     public void onClickSettings(MenuItem item) {
         LogHelper.logThreadId("Settings option pressed.");
     }

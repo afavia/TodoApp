@@ -9,10 +9,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.anthony.parsetodo.AppController;
 import com.example.anthony.parsetodo.R;
+import com.example.anthony.parsetodo.events.LoginEvent;
+import com.example.anthony.parsetodo.events.LoginResultEvent;
+import com.google.android.gms.appindexing.AppIndexApi;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.squareup.otto.Subscribe;
 
 /**
  * A login screen that offers login via email/password.
@@ -30,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         mUserName = (EditText) findViewById(R.id.sign_in_username);
         mPassword = (EditText) findViewById(R.id.sign_in_password);
         mErrorField = (TextView) findViewById(R.id.error_messages_login);
+
+        AppController.bus.register(this);
     }
 
     @Override
@@ -55,39 +62,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void signIn(final View v) {
-        v.setEnabled(false);
+        AppController.bus.post(new LoginEvent(mUserName.getText().toString(), mPassword.getText().toString()));
+    }
 
-        ParseUser.logInInBackground(mUserName.getText().toString(),
-                mPassword.getText().toString(),
-                new LogInCallback() {
-                    @Override
-                    public void done(ParseUser parseUser, ParseException e) {
-                        if (parseUser != null) {
-                            Intent i = new Intent(LoginActivity.this, TodoActivity.class);
-                            startActivity(i);
-                            finish();
-                        } else {
-                            switch (e.getCode()) {
-                                case ParseException.USERNAME_TAKEN:
-                                    mErrorField.setText("Sorry this username is already taken");
-                                    break;
-                                case ParseException.USERNAME_MISSING:
-                                    mErrorField.setText("Sorry you must supply a username to register");
-                                    break;
-                                case ParseException.PASSWORD_MISSING:
-                                    mErrorField.setText("Sorry you must supply a password to register");
-                                    break;
-                                case ParseException.OBJECT_NOT_FOUND:
-                                    mErrorField.setText("Sorry, those credentials were invalid.");
-                                    break;
-                                default:
-                                    mErrorField.setText(e.getLocalizedMessage());
-                                    break;
-                            }
-                            v.setEnabled(true);
-                        }
-                    }
-                });
+    @Subscribe
+    public void onLoginResult(LoginResultEvent result) {
+        if (result.isSuccessful) {
+            Intent i = new Intent(LoginActivity.this, TodoActivity.class);
+            startActivity(i);
+            finish();
+        }
+        else {
+            mErrorField.setText(result.msg);
+        }
     }
 
     public void showRegistration(View v) {

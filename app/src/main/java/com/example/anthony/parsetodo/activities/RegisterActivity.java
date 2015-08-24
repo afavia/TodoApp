@@ -6,13 +6,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.anthony.parsetodo.AppController;
 import com.example.anthony.parsetodo.R;
+import com.example.anthony.parsetodo.events.RegisterEvent;
+import com.example.anthony.parsetodo.events.RegisterResultEvent;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+import com.squareup.otto.Subscribe;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -28,6 +33,8 @@ public class RegisterActivity extends AppCompatActivity {
         mUserName = (EditText) findViewById(R.id.register_username);
         mPassword = (EditText) findViewById(R.id.register_password);
         mErrorField = (TextView) findViewById(R.id.error_messages);
+
+        AppController.bus.register(this);
     }
 
     @Override
@@ -56,39 +63,22 @@ public class RegisterActivity extends AppCompatActivity {
         if (mUserName.getText().length() == 0 || mPassword.getText().length() == 0) {
             return;
         }
-        v.setEnabled(false);
-        ParseUser user = new ParseUser();
-        user.setUsername(mUserName.getText().toString());
-        user.setPassword(mPassword.getText().toString());
         mErrorField.setText("");
 
-        user.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Intent i = new Intent(RegisterActivity.this, TodoActivity.class);
-                    startActivity(i);
-                    finish();
-                }
-                else {
-                    switch (e.getCode()) {
-                        case ParseException.USERNAME_TAKEN:
-                            mErrorField.setText("Sorry this username is already taken");
-                            break;
-                        case ParseException.USERNAME_MISSING:
-                            mErrorField.setText("Sorry you must supply a username to register");
-                            break;
-                        case ParseException.PASSWORD_MISSING:
-                            mErrorField.setText("Sorry you must supply a password to register");
-                            break;
-                        default:
-                            mErrorField.setText(e.getLocalizedMessage());
-                            break;
-                    }
-                    v.setEnabled(true);
-                }
-            }
-        });
+        AppController.bus.post(new RegisterEvent(mUserName.getText().toString(), mPassword.getText().toString()));
+    }
+
+    @Subscribe
+    public void onRegisterEventResult(RegisterResultEvent resultEvent) {
+        if (resultEvent.isSuccessful) {
+            Intent i = new Intent(RegisterActivity.this, TodoActivity.class);
+            startActivity(i);
+            finish();
+        } else {
+            mErrorField.setText(resultEvent.msg);
+            Button b = (Button) findViewById(R.id.signInButton);
+            b.setEnabled(true);
+        }
     }
 
     public void showLogin(View v) {
