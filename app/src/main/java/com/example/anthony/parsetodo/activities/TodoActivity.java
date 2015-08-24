@@ -53,16 +53,12 @@ public class TodoActivity extends AppCompatActivity{
 
         AppController.bus.register(this);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
         LogHelper.configure(getResources().getString(R.string.app_name));
 
         Intent intent = getIntent();
         if (intent.getAction() != null ){
             if (intent.getAction().equals("android.intent.action.MAIN")) {
                 mController.initParse(getIntent());
-                initParse();
             }
         }
 
@@ -88,16 +84,6 @@ public class TodoActivity extends AppCompatActivity{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Task t = mAdapter.getItem(position);
-//                TextView taskDescription = (TextView) view.findViewById(R.id.task_description);
-//                t.setCompleted(!t.isCompleted());
-//
-//                if (t.isCompleted()) {
-//                    taskDescription.setPaintFlags(taskDescription.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-//                } else {
-//                    taskDescription.setPaintFlags(taskDescription.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-//                }
-//                t.saveEventually();
-
                 Intent i = new Intent(TodoActivity.this, TaskActivity.class);
                 i.putExtra(TaskActivity.TASK_TITLE, t.getDescription());
                 i.putExtra(TaskActivity.TASK_NUMBER, position);
