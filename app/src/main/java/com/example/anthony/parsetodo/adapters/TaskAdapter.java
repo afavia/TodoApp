@@ -1,6 +1,7 @@
 package com.example.anthony.parsetodo.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.List;
-
+import com.example.anthony.parsetodo.AppController;
 import com.example.anthony.parsetodo.R;
 import com.example.anthony.parsetodo.models.Task;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Anthony on 8/13/2015.
@@ -24,6 +27,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         super(context, R.layout.task_row_item, objects);
         mContext = context;
         mTasks = objects;
+        AppController.bus.register(this);
     }
 
     @Override
@@ -42,6 +46,17 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         } else {
             descriptionView.setPaintFlags(descriptionView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
+
+        if (t.getDueDate() != null) {
+            if (t.getDueDate().before(new Date())) {
+                descriptionView.setBackgroundColor(Color.argb(128, 255, 0, 0));
+            }
+            else
+                descriptionView.setBackgroundColor(Color.argb(0, 0, 0, 0));
+        }
+        else
+            descriptionView.setBackgroundColor(Color.argb(0, 0, 0, 0));
+
         return convertView;
     }
 }
