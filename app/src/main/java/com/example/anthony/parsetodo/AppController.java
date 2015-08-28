@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.anthony.parsetodo.activities.LoginActivity;
-import com.example.anthony.parsetodo.activities.RegisterActivity;
-import com.example.anthony.parsetodo.activities.TodoActivity;
 import com.example.anthony.parsetodo.dao.IRepository;
 import com.example.anthony.parsetodo.dao.ParseRepository;
 import com.example.anthony.parsetodo.events.LoginEvent;
@@ -18,6 +15,7 @@ import com.example.anthony.parsetodo.events.RegisterEvent;
 import com.example.anthony.parsetodo.events.RegisterResultEvent;
 import com.example.anthony.parsetodo.events.TaskCreateEvent;
 import com.example.anthony.parsetodo.events.TaskCreateResultEvent;
+import com.example.anthony.parsetodo.models.Objective;
 import com.example.anthony.parsetodo.models.Task;
 import com.parse.LogInCallback;
 import com.parse.Parse;
@@ -53,11 +51,6 @@ public class AppController extends Application {
         return repo.getTasks();
     }
 
-    public void addTask(Task task) {
-        repo.addTask(task);
-    }
-
-
     public void addTask(String description, boolean complete, Date dueDate) {
         Task t = new Task();
         t.setCompleted(complete);
@@ -72,8 +65,34 @@ public class AppController extends Application {
     }
 
     public void updateTask(Task task, int taskPos) {
-        repo.updateTask(task, taskPos);
+        repo.update(task, taskPos);
+    }
 
+    public List<Objective> getObjectives() {
+        return repo.getObjectives();
+    }
+
+    public Objective getObjective(int position) {
+        if (position < repo.getObjectives().size()) return repo.getObjectives().get(position);
+        else return new Objective();
+    }
+    public void addObjective(String name, boolean isComplete, Date dueDate) {
+        try {
+
+
+            Objective o = new Objective();
+            o.setName(name);
+            o.setCompleted(isComplete);
+            o.setDueDate(dueDate);
+            repo.addObjective(o);
+        } catch (Exception e) {
+
+            Log.e("APP", e.getMessage());
+        }
+    }
+
+    public void updateObjective(Objective objective, int objectivePos) {
+        repo.update(objective, objectivePos);
     }
 
     @Subscribe
@@ -178,6 +197,18 @@ public class AppController extends Application {
         Parse.initialize(this, getString(R.string.app_id), getString(R.string.client_id));
         ParseAnalytics.trackAppOpenedInBackground(intent);
         ParseObject.registerSubclass(Task.class);
+        ParseObject.registerSubclass(Objective.class);
         ParseInstallation.getCurrentInstallation().saveInBackground();
+
+
+        for (int i = 0; i < 100; i++) {
+            StringBuilder b = new StringBuilder();
+            b.append("Objective ");
+            b.append(i + 1);
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.WEEK_OF_YEAR, 3);
+
+            addObjective(b.toString(), false, cal.getTime());
+        }
     }
 }

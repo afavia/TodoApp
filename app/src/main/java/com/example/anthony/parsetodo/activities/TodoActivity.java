@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,17 +20,12 @@ import com.example.anthony.parsetodo.adapters.TaskAdapter;
 import com.example.anthony.parsetodo.events.LogoutEvent;
 import com.example.anthony.parsetodo.events.LogoutResultEvent;
 import com.example.anthony.parsetodo.events.TaskCreateEvent;
-import com.example.anthony.parsetodo.models.Task;
 import com.example.anthony.parsetodo.events.TaskCreateResultEvent;
+import com.example.anthony.parsetodo.models.Task;
 import com.example.anthony.parsetodo.utils.LogHelper;
-import com.parse.Parse;
-import com.parse.ParseAnalytics;
-import com.parse.ParseInstallation;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.squareup.otto.Subscribe;
 
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 

@@ -39,6 +39,10 @@
             android:name=".activities.TaskActivity"
             android:label="@string/title_activity_task" >
         </activity>
+        <activity
+            android:name=".activities.ObjectivesActivity"
+            android:label="@string/title_activity_objectives" >
+        </activity>
     </application>
 
 </manifest>

@@ -18,4 +18,5 @@
     <string name="notes_string">Notes:</string>
     <string name="due_date_string">Due Date:</string>
     <string name="description">Task Description:</string>
+    <string name="title_activity_objectives">Objectives</string>
 </resources>
