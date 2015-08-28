@@ -3,6 +3,7 @@ package com.example.anthony.parsetodo.models;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+
 import java.util.Date;
 
 /**
@@ -48,6 +49,14 @@ public class Task extends ParseObject {
 
     public String getNotes() {
         return getString("notes");
+    }
+
+    public Objective getObjective() {
+        return (Objective) getParseObject("objective");
+    }
+
+    public void setObjective(Objective objective) {
+        put("objective", objective);
     }
 
 }
